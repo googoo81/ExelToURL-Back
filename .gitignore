@@ -1,0 +1,25 @@
+# Python 가상환경 제외
+venv/
+
+# Pycache 및 컴파일된 Python 파일 제외
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 환경 설정 파일 제외 (예: 환경 변수 파일)
+.env
+*.env
+
+# 로그 파일 제외
+logs/
+*.log
+
+# IDE 및 편집기 관련 파일 제외
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Flask 및 기타 프로젝트 설정 관련
+instance/
