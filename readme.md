@@ -20,6 +20,9 @@ venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Update requirements.txt
+pip freeze > requirements.txt
 ```
 
 ### 2. Run the Application

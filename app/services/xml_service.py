@@ -43,13 +43,13 @@ def check_xml_url(url):
 
 def analyze_xml_content(url):
     """
-    Analyze XML content at the specified URL, looking for TYPE tags.
+    Analyze XML content at the specified URL, looking for TYPE and STYLE tags.
     
     Args:
         url (str): The URL to analyze
-        
+        z
     Returns:
-        dict: Result with XML analysis information
+        dict: Result with XML analysis information including TYPE and STYLE content
     """
     try:
         # GET request to retrieve XML content
@@ -70,20 +70,32 @@ def analyze_xml_content(url):
         # Get XML content and try to parse
         xml_content = response.text
         type_value = None
+        style_content = "undefined"  # Default to undefined if tag doesn't exist
         
         try:
-            # Parse XML and find TYPE tags
+            # Parse XML and find TYPE and STYLE tags
             root = ET.fromstring(xml_content)
-            type_elements = root.findall('.//TYPE')
             
+            # Extract TYPE tag content
+            type_elements = root.findall('.//TYPE')
             if type_elements:
                 type_value = type_elements[0].text
+            
+            # Extract STYLE tag content
+            style_elements = root.findall('.//STYLE')
+            if style_elements:
+                # Tag exists, but might be empty
+                if style_elements[0].text is None or style_elements[0].text.strip() == "":
+                    style_content = "null"  # Empty tag
+                else:
+                    style_content = style_elements[0].text  # Populated tag
                 
             return {
                 'url': url,
                 'isValid': True,
                 'statusCode': status_code,
-                'type_value': type_value
+                'type_value': type_value,
+                'style_content': style_content
             }
         except ET.ParseError:
             # XML parsing error
