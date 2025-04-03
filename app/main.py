@@ -9,8 +9,10 @@ def create_app():
     # Import blueprints - ensure these match your actual file names
     from app.routes.url_route import url_bp  # Change from url_routes to url_route if that's your file name
     from app.routes.xml_route import xml_bp  # Change from xml_routes to xml_route if that's your file name
+    from app.routes.download_route import download_bp  # Add the new download blueprint
     
     app.register_blueprint(url_bp)
     app.register_blueprint(xml_bp)
+    app.register_blueprint(download_bp)  # Register the new download blueprint
     
     return app
