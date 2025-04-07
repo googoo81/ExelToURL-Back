@@ -24,12 +24,13 @@ def download_single_xml(url: str, timeout: int = 10) -> Tuple[bool, bytes, str]:
     except Exception as e:
         return False, b"", f"Error downloading XML: {str(e)}"
 
-def create_zip_from_urls(urls: List[str], worker_count: int = 5) -> Tuple[bool, io.BytesIO, str]:
+def create_zip_from_urls(urls: List[str], filenames: Dict[str, str] = None, worker_count: int = 5) -> Tuple[bool, io.BytesIO, str]:
     """
     여러 URL에서 XML 파일을 다운로드하여 ZIP 파일을 생성합니다.
     
     Args:
         urls: 다운로드할 XML 파일들의 URL 목록
+        filenames: URL을 키로 사용하고 사용자 정의 파일명을 값으로 사용하는 딕셔너리
         worker_count: 동시 다운로드 작업자 수
     
     Returns:
@@ -37,6 +38,10 @@ def create_zip_from_urls(urls: List[str], worker_count: int = 5) -> Tuple[bool, 
     """
     if not urls:
         return False, io.BytesIO(), "No URLs provided"
+    
+    # 파일명 매핑이 제공되지 않은 경우 빈 딕셔너리로 초기화
+    if filenames is None:
+        filenames = {}
     
     # 결과를 저장할 딕셔너리
     results = {}
@@ -49,9 +54,16 @@ def create_zip_from_urls(urls: List[str], worker_count: int = 5) -> Tuple[bool, 
         idx, url = idx_url
         success, content, error = download_single_xml(url)
         if success:
-            filename = url.split('/')[-1]
-            if not filename.endswith('.xml'):
-                filename = f"file_{idx}.xml"
+            # 사용자 정의 파일명 사용
+            custom_filename = filenames.get(url)
+            if custom_filename:
+                filename = f"{idx+1:03d}_{custom_filename}"  # 순서 번호를 앞에 추가 (001_, 002_, ...)
+            else:
+                # 기본 파일명 생성
+                base_filename = url.split('/')[-1]
+                if not base_filename.endswith('.xml'):
+                    base_filename = f"file_{idx}.xml"
+                filename = f"{idx+1:03d}_{base_filename}"  # 순서 번호를 앞에 추가 (001_, 002_, ...)
             return idx, url, success, content, filename, ""
         else:
             return idx, url, False, b"", "", error

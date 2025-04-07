@@ -36,6 +36,7 @@ def create_zip():
     """여러 XML 파일을 다운로드하여 ZIP 파일로 압축합니다."""
     data = request.json
     urls = data.get('urls', [])
+    filenames = data.get('filenames', {})  # 사용자 정의 파일명 매핑
     
     if not urls:
         return jsonify({'error': 'No URLs provided'}), 400
@@ -45,8 +46,8 @@ def create_zip():
     # Zip 파일명 설정 (선택적)
     zip_filename = data.get('filename', 'xml_files.zip')
     
-    # ZIP 파일 생성
-    success, memory_file, message = create_zip_from_urls(urls, worker_count)
+    # ZIP 파일 생성 (파일명 매핑 전달)
+    success, memory_file, message = create_zip_from_urls(urls, filenames, worker_count)
     
     if not success:
         return jsonify({'error': message}), 400
