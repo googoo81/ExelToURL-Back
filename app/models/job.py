@@ -3,7 +3,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 
 class JobManager:
-    """Manages job tracking for asynchronous URL validation tasks"""
+    """Manages job tracking for asynchronous URL validation and analysis tasks"""
     
     def __init__(self):
         self.jobs = {}
@@ -16,12 +16,23 @@ class JobManager:
             'completed': 0,
             'results': [],
             'urls': urls,
-            'created_at': time.time()
+            'created_at': time.time(),
+            'job_type': job_type
         }
         
-        # Add type_counts for XML analysis jobs
+        # Add specific counters for XML analysis jobs
         if job_type == "xml_analysis":
             job_data['type_counts'] = Counter()
+            job_data['style_counts'] = Counter()
+            job_data['tag_counts'] = {
+                'course_code': Counter(),
+                'grade': Counter(),
+                'session': Counter(),
+                'unit': Counter(),
+                'period': Counter(),
+                'order': Counter(),
+                'study': Counter()
+            }
             
         self.jobs[job_id] = job_data
         return job_data
@@ -44,6 +55,23 @@ class JobManager:
         """Update type counts for XML analysis jobs"""
         if job_id in self.jobs and 'type_counts' in self.jobs[job_id] and type_value:
             self.jobs[job_id]['type_counts'][type_value] += 1
+            return True
+        return False
+    
+    def update_style_counts(self, job_id, style_content):
+        """Update style counts for XML analysis jobs"""
+        if job_id in self.jobs and 'style_counts' in self.jobs[job_id] and style_content:
+            self.jobs[job_id]['style_counts'][style_content] += 1
+            return True
+        return False
+    
+    def update_tag_counts(self, job_id, tag_name, tag_value):
+        """Update counts for specific XML tags"""
+        if (job_id in self.jobs and 
+            'tag_counts' in self.jobs[job_id] and 
+            tag_name in self.jobs[job_id]['tag_counts'] and 
+            tag_value):
+            self.jobs[job_id]['tag_counts'][tag_name][tag_value] += 1
             return True
         return False
     

@@ -59,7 +59,7 @@ def start_xml_validation():
 
 @xml_bp.route('/analyze-xml-types', methods=['POST'])
 def analyze_xml_types():
-    """Start asynchronous analysis of XML types"""
+    """Start asynchronous analysis of XML tags"""
     data = request.get_json()
     
     if not data or 'urls' not in data:
@@ -86,9 +86,44 @@ def analyze_xml_types():
                 try:
                     result = future.result()
                     
-                    # Update type counts if valid XML with a type value
-                    if result['isValid'] and 'type_value' in result and result['type_value']:
-                        job_manager.update_type_counts(job_id, result['type_value'])
+                    # Update counts for each tag if valid XML
+                    if result['isValid']:
+                        # Update type counts
+                        if 'type_value' in result and result['type_value']:
+                            job_manager.update_type_counts(job_id, result['type_value'])
+                        
+                        # Update style counts
+                        if 'style_content' in result and result['style_content']:
+                            job_manager.update_style_counts(job_id, result['style_content'])
+                        
+                        # Update COURSE_CODE counts
+                        if 'course_code' in result and result['course_code']:
+                            job_manager.update_tag_counts(job_id, 'course_code', result['course_code'])
+                            
+                        # Update GRADE counts
+                        if 'grade' in result and result['grade']:
+                            job_manager.update_tag_counts(job_id, 'grade', result['grade'])
+                            
+                        # Update SESSION counts  
+                        if 'session' in result and result['session']:
+                            job_manager.update_tag_counts(job_id, 'session', result['session'])
+                            
+                        # Update UNIT counts
+                        if 'unit' in result and result['unit']:
+                            job_manager.update_tag_counts(job_id, 'unit', result['unit'])
+                            
+                        # Update PERIOD counts
+                        if 'period' in result and result['period']:
+                            job_manager.update_tag_counts(job_id, 'period', result['period'])
+                            
+                        # Update ORDER counts
+                        if 'order' in result and result['order']:
+                            job_manager.update_tag_counts(job_id, 'order', result['order'])
+                            
+                        # Update STUDY counts
+                        if 'study' in result and result['study']:
+                            job_manager.update_tag_counts(job_id, 'study', result['study'])
+                            
                         valid_xmls.append(result)
                         
                 except Exception as e:
@@ -112,5 +147,5 @@ def analyze_xml_types():
     return jsonify({
         'job_id': job_id,
         'status': 'in_progress',
-        'message': 'XML 유형 분석 작업이 시작되었습니다.'
+        'message': 'XML 태그 분석 작업이 시작되었습니다.'
     })
