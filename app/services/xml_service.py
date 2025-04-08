@@ -71,17 +71,17 @@ def analyze_xml_content(url):
         # Get XML content and try to parse
         xml_content = response.text
         
-        # Default values for all tags
+        # Default values for all tags - initialize with "undefined"
         tag_values = {
-            'course_code': None,
-            'grade': None,
-            'session': None,
-            'unit': None,
-            'period': None,
-            'order': None,
-            'study': None,
-            'type_value': None,
-            'style_content': 'undefined'  # Default to undefined if tag doesn't exist
+            'course_code': "undefined",
+            'grade': "undefined",
+            'session': "undefined",
+            'unit': "undefined",
+            'period': "undefined",
+            'order': "undefined",
+            'study': "undefined",
+            'type_value': "undefined",
+            'style_content': "undefined"
         }
         
         try:
@@ -104,18 +104,16 @@ def analyze_xml_content(url):
             # Extract all requested tags
             for xml_tag, dict_key in tag_mapping.items():
                 elements = root.findall(f'.//{xml_tag}')
-                if elements and elements[0].text is not None:
-                    # For STYLE tag, handle empty strings specially
-                    if xml_tag == 'STYLE' and elements[0].text.strip() == "":
+                
+                # Tag exists
+                if elements:
+                    # Tag exists but content is None or empty
+                    if elements[0].text is None or elements[0].text.strip() == "":
                         tag_values[dict_key] = "null"
                     else:
+                        # Tag exists with content
                         tag_values[dict_key] = elements[0].text.strip()
-                elif xml_tag == 'STYLE' and (not elements or elements[0].text is None):
-                    # Special handling for empty STYLE tag
-                    if not elements:
-                        tag_values[dict_key] = "undefined"
-                    else:
-                        tag_values[dict_key] = "null"
+                # Tag doesn't exist (keep as "undefined" from initialization)
             
             # Create the result dictionary
             result = {
