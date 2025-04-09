@@ -124,6 +124,14 @@ def analyze_xml_types():
                         if 'study' in result and result['study']:
                             job_manager.update_tag_counts(job_id, 'study', result['study'])
                             
+                        # Update STUDY counts
+                        if 'step' in result and result['step']:
+                            job_manager.update_tag_counts(job_id, 'step', result['step'])
+                            
+                        # Update STUDY counts
+                        if 'day' in result and result['day']:
+                            job_manager.update_tag_counts(job_id, 'day', result['day'])
+                                                        
                         valid_xmls.append(result)
                         
                 except Exception as e:

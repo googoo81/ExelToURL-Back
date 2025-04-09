@@ -81,7 +81,9 @@ def analyze_xml_content(url):
             'order': "undefined",
             'study': "undefined",
             'type_value': "undefined",
-            'style_content': "undefined"
+            'style_content': "undefined",
+            "step": "undefined",
+            "day": "undefined"
         }
         
         try:
@@ -98,7 +100,9 @@ def analyze_xml_content(url):
                 'ORDER': 'order',
                 'STUDY': 'study',
                 'TYPE': 'type_value',
-                'STYLE': 'style_content'
+                'STYLE': 'style_content',
+                'STEP': 'step',
+                'DAY': 'day'
             }
             
             # Extract all requested tags
