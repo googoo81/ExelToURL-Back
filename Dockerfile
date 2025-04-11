@@ -16,15 +16,11 @@ RUN apt-get update && apt-get install -y \
     libxslt1-dev \
     git \
     curl \
-    # cairo-related dependencies 추가
     libpangocairo-1.0-0 \
     libpango1.0-dev \
     libatk1.0-dev \
-    libgdk-pixbuf2.0-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-
+    libgdk-pixbuf2.0-dev 
+    
 # Set work directory
 WORKDIR /app
 
