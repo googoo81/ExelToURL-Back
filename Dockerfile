@@ -1,7 +1,7 @@
 FROM python:3.10-slim
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
     build-essential \
     libcairo2 \
@@ -19,8 +19,9 @@ RUN apt-get update && apt-get install -y \
     libpangocairo-1.0-0 \
     libpango1.0-dev \
     libatk1.0-dev \
-    libgdk-pixbuf2.0-dev 
-    
+    libgdk-pixbuf2.0-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Set work directory
 WORKDIR /app
 
@@ -29,8 +30,11 @@ COPY requirements.txt .
 RUN pip install --upgrade pip setuptools wheel \
     && pip install -r requirements.txt
 
-# Copy the rest of your app
+# Copy the rest of the app
 COPY . .
 
-# Run with Gunicorn
+# Expose port (optional but helpful)
+EXPOSE 5000
+
+# Run the app with Gunicorn
 CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:5000", "--workers=2"]
