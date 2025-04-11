@@ -1,14 +1,18 @@
 FROM python:3.10-slim
 
-# Install system dependencies
+# Install system dependencies (incl. cairo-related for pycairo)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-dev \
-    build-essential \
+    gcc \
+    pkg-config \
     libcairo2 \
     libcairo2-dev \
-    pkg-config \
     libgirepository1.0-dev \
     gir1.2-pango-1.0 \
+    libpango1.0-dev \
+    libpangocairo-1.0-0 \
+    libatk1.0-dev \
+    libgdk-pixbuf2.0-dev \
     libffi-dev \
     libssl-dev \
     libcurl4-openssl-dev \
@@ -16,25 +20,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxslt1-dev \
     git \
     curl \
-    libpangocairo-1.0-0 \
-    libpango1.0-dev \
-    libatk1.0-dev \
-    libgdk-pixbuf2.0-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
+# Preinstall pycairo to avoid build issues
 RUN pip install --upgrade pip setuptools wheel \
-    && pip install -r requirements.txt
+    && pip install pycairo
 
-# Copy the rest of the app
+# Copy requirements and install the rest
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy rest of the app
 COPY . .
 
-# Expose port (optional but helpful)
+# Expose port
 EXPOSE 5000
 
-# Run the app with Gunicorn
+# Run with Gunicorn
 CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:5000", "--workers=2"]
