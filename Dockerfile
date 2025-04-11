@@ -32,4 +32,4 @@ RUN pip install --upgrade pip setuptools wheel \
 # Copy the rest of your app
 COPY . .
 
-CMD ["python", "your_entry_point.py"]
+CMD ["python", "run.py"]
