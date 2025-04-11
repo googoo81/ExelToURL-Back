@@ -22,14 +22,13 @@ RUN apt-get update && apt-get install -y \
 # Set work directory
 WORKDIR /app
 
-# Copy your requirements file
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --upgrade pip setuptools wheel \
     && pip install -r requirements.txt
 
 # Copy the rest of your app
 COPY . .
 
-CMD ["python", "run.py"]
+# Run with Gunicorn
+CMD ["gunicorn", "run:app", "--bind", "0.0.0.0:5000", "--workers=2"]
