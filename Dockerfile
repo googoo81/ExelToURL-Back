@@ -1,1 +1,1 @@
-RUN apt-get update && apt-get install -y libcairo2-dev
+RUN apt-get update && apt-get install -y python3-dev build-essential libcairo2-dev pkg-config
